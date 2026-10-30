@@ -50,7 +50,12 @@ def generalize_column(df, column_name, lookup_file=None, regex=None):
                 if lookup_df.shape[1] != 2:
                     raise ValueError(f"Lookup file {lookup_file} must have exactly two columns (value, generalized_value).  It has {lookup_df.shape[1]} columns.")
                 lookup_dict = dict(zip(lookup_df.iloc[:, 0].astype(str), lookup_df.iloc[:, 1].astype(str))) # Ensure keys are strings.
-                df[column_name] = df[column_name].astype(str).map(lookup_dict).fillna(df[column_name]) #Ensures nulls are handled by retaining original value
+                # Fill from the string form of the column, not the original
+                # series: filling a string result with values of the original
+                # dtype is the combination newer pandas warns about, and the
+                # generalized column is text either way.
+                original = df[column_name].astype(str)
+                df[column_name] = original.map(lookup_dict).fillna(original)
             except FileNotFoundError:
                 logging.error(f"Lookup file not found: {lookup_file}")
                 raise
@@ -124,29 +129,3 @@ def main():
 if __name__ == "__main__":
     main()
 
-
-"""
-Usage Examples:
-
-1. Generalize ages in 'age' column using a lookup table:
-   python main.py input.csv output.csv age --lookup_file age_lookup.csv
-   Where age_lookup.csv contains:
-   age,age_group
-   18,18-25
-   19,18-25
-   26,26-35
-   27,26-35
-   ...
-
-2. Generalize phone numbers using regex (replace all digits with X):
-   python main.py input.csv output.csv phone_number --regex "\d::X"
-
-3. Demonstrating Error Handling (missing file):
-   python main.py missing.csv output.csv age --lookup_file age_lookup.csv
-
-4. Demonstrating Error Handling (invalid regex):
-    python main.py input.csv output.csv phone_number --regex "\d" # missing :: replacement
-
-5. Demonstrating Error Handling (column doesn't exist):
-   python main.py input.csv output.csv non_existent_column --lookup_file age_lookup.csv
-"""
