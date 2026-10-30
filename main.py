@@ -1,7 +1,6 @@
 import argparse
 import pandas as pd
 import logging
-import re
 import sys
 
 # Configure logging
@@ -57,32 +56,23 @@ def generalize_column(df, column_name, lookup_file=None, regex=None):
                 original = df[column_name].astype(str)
                 df[column_name] = original.map(lookup_dict).fillna(original)
             except FileNotFoundError:
-                logging.error(f"Lookup file not found: {lookup_file}")
                 raise
-            except Exception as e:
-                 logging.error(f"Error processing lookup file {lookup_file}: {e}")
-                 raise
 
         elif regex:
-            try:
-                pattern, replacement = regex.split("::", 1)
-                df[column_name] = df[column_name].astype(str).replace(pattern, replacement, regex=True)
-            except ValueError:
-                logging.error("Invalid regex format.  Use 'pattern::replacement'.")
-                raise
-            except Exception as e:
-                logging.error(f"Error applying regex: {e}")
-                raise
+            # A missing "::" makes the unpack raise ValueError with a
+            # message about value counts that tells the user nothing;
+            # name the actual format problem and let main log it once.
+            if "::" not in regex:
+                raise ValueError("Invalid regex format. Use 'pattern::replacement'.")
+            pattern, replacement = regex.split("::", 1)
+            df[column_name] = df[column_name].astype(str).replace(pattern, replacement, regex=True)
 
         return df
 
-    except ValueError as e:
-        logging.error(e)
-        raise
-    except FileNotFoundError as e:
-        raise e # Re-raise to allow main() to handle it.
-    except Exception as e:
-        logging.error(f"An unexpected error occurred: {e}")
+    except (ValueError, FileNotFoundError):
+        # No logging in this layer: every handler here and in main used
+        # to log the same failure, so one bad argument printed the error
+        # three times. main logs it once, with the exit code.
         raise
 
 
@@ -114,8 +104,13 @@ def main():
         generalized_df.to_csv(args.output_file, index=False)
         logging.info(f"Generalized data saved to {args.output_file}")
 
-    except FileNotFoundError:
-        logging.error(f"Input file not found: {args.input_file}")
+    except FileNotFoundError as e:
+        # The missing file can be the lookup file, not just the input;
+        # the old message always named the input file, which sent the
+        # user to check a file that exists. The exception knows which
+        # path failed, so report that one.
+        missing = getattr(e, "filename", None) or args.input_file
+        logging.error(f"File not found: {missing}")
         sys.exit(1)  # Exit with an error code
     except ValueError as e:
         logging.error(e)
