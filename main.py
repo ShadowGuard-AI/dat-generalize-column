@@ -14,12 +14,13 @@ def setup_argparse():
     parser.add_argument("input_file", help="Path to the input CSV file.")
     parser.add_argument("output_file", help="Path to the output CSV file.")
     parser.add_argument("column_name", help="Name of the column to generalize.")
-    parser.add_argument("--lookup_file", help="Path to a CSV file containing the lookup table (value,generalized_value).", required=False)
+    parser.add_argument("--lookup_file", help="Path to a CSV file containing the lookup table (value,generalized_value). Values not present in the lookup file are written to the output unchanged in the default mode.", required=False)
     parser.add_argument("--regex", help="Regular expression pattern and replacement string (pattern::replacement).", required=False)
+    parser.add_argument("--strict-lookup", action="store_true", help="With --lookup_file, exit 1 and write no output when any value in the column is not covered by the lookup file.")
 
     return parser
 
-def generalize_column(df, column_name, lookup_file=None, regex=None):
+def generalize_column(df, column_name, lookup_file=None, regex=None, strict_lookup=False):
     """
     Generalizes the specified column based on either a lookup table or a regular expression.
 
@@ -54,7 +55,13 @@ def generalize_column(df, column_name, lookup_file=None, regex=None):
                 # dtype is the combination newer pandas warns about, and the
                 # generalized column is text either way.
                 original = df[column_name].astype(str)
-                df[column_name] = original.map(lookup_dict).fillna(original)
+                mapped = original.map(lookup_dict)
+                miss_count = int(mapped.isna().sum())
+                if miss_count:
+                    logging.warning(f"Lookup warning: {miss_count} value(s) in column '{column_name}' are not covered by the lookup file and will pass through unchanged.")
+                    if strict_lookup:
+                        raise ValueError(f"Strict lookup failed: {miss_count} value(s) in column '{column_name}' are not covered by the lookup file.")
+                df[column_name] = mapped.fillna(original)
             except FileNotFoundError:
                 raise
 
@@ -98,7 +105,7 @@ def main():
             raise ValueError(f"Column '{args.column_name}' not found in the input file.")
 
 
-        generalized_df = generalize_column(df.copy(), args.column_name, args.lookup_file, args.regex)
+        generalized_df = generalize_column(df.copy(), args.column_name, args.lookup_file, args.regex, strict_lookup=args.strict_lookup)
 
         # Securely write to the output file (avoiding potential path traversal vulnerabilities)
         generalized_df.to_csv(args.output_file, index=False)
