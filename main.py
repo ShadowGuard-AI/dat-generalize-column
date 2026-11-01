@@ -49,6 +49,12 @@ def generalize_column(df, column_name, lookup_file=None, regex=None, strict_look
                 lookup_df = pd.read_csv(lookup_file)
                 if lookup_df.shape[1] != 2:
                     raise ValueError(f"Lookup file {lookup_file} must have exactly two columns (value, generalized_value).  It has {lookup_df.shape[1]} columns.")
+                # Both sides go through astype(str), so matching is a
+                # text comparison of however pandas read the cells: a
+                # value stored as 5.0 in one file and 5 in the other
+                # does not match, and a lookup file listing the same
+                # value twice keeps only its last generalized form,
+                # because a dict cannot hold both.
                 lookup_dict = dict(zip(lookup_df.iloc[:, 0].astype(str), lookup_df.iloc[:, 1].astype(str))) # Ensure keys are strings.
                 # Fill from the string form of the column, not the original
                 # series: filling a string result with values of the original
@@ -71,6 +77,11 @@ def generalize_column(df, column_name, lookup_file=None, regex=None, strict_look
             # name the actual format problem and let main log it once.
             if "::" not in regex:
                 raise ValueError("Invalid regex format. Use 'pattern::replacement'.")
+            # The split takes the first "::" only, so the replacement
+            # may itself contain "::". The replacement is also handed
+            # to pandas as a regex replacement, where backslash group
+            # references are live: a replacement written as plain text
+            # with a backslash in it does not come out literally.
             pattern, replacement = regex.split("::", 1)
             df[column_name] = df[column_name].astype(str).replace(pattern, replacement, regex=True)
 
