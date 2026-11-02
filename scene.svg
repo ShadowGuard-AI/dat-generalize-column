@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 300" role="img" aria-label="Station Papa in three bands: cloud layers drifting slowly and changing shape at their edges in the far band, the weather ship in the middle band rising on a swell and settling while its wind sock lifts in a gust, points, and drops and its lamp brightens, and the wheelhouse barometer dial in the near band with its needle trembling toward storm and back while the masthead vane turns on its pivot">
+<rect width="900" height="300" fill="#2e6e5e"/>
+<rect width="900" height="104" fill="#aeb8b4"/>
+<g fill="#f3eedd"><ellipse cx="180" cy="36" rx="130" ry="20"><animate attributeName="rx" values="130;148;130" dur="18s" repeatCount="indefinite"/><animate attributeName="opacity" values="0.95;0.7;0.95" dur="18s" repeatCount="indefinite"/></ellipse>
+<ellipse cx="520" cy="58" rx="170" ry="24"><animate attributeName="rx" values="170;190;170" dur="22s" repeatCount="indefinite"/><animate attributeName="opacity" values="0.9;0.65;0.9" dur="22s" repeatCount="indefinite"/></ellipse>
+<ellipse cx="800" cy="30" rx="110" ry="16"><animate attributeName="rx" values="110;124;110" dur="16s" repeatCount="indefinite"/></ellipse>
+<animateTransform attributeName="transform" type="translate" values="0 0; 34 0; 0 0" dur="24s" repeatCount="indefinite"/></g>
+<g fill="#4a5560" opacity="0.55"><ellipse cx="200" cy="52" rx="120" ry="10"/><ellipse cx="540" cy="76" rx="160" ry="12"/><ellipse cx="810" cy="44" rx="100" ry="9"/></g>
+<path d="M0 236 Q150 218 300 236 T600 236 T900 236 V300 H0 Z" fill="#1e5446"/>
+<path d="M0 252 Q150 236 300 252 T600 252 T900 252" stroke="#2e7d6b" stroke-width="4" fill="none"/>
+<g><animateTransform attributeName="transform" type="translate" values="0 4; 0 -6; 0 4" dur="9s" repeatCount="indefinite"/>
+<polygon points="300,206 640,196 676,214 620,240 356,242 314,224" fill="#2e7d6b"/>
+<line x1="352" y1="222" x2="636" y2="212" stroke="#b08d3c" stroke-width="3"/>
+<rect x="392" y="156" width="118" height="52" fill="#f3eedd" stroke="#4a5560" stroke-width="2"/>
+<rect x="410" y="168" width="34" height="26" fill="#4a5560"/>
+<rect x="540" y="164" width="32" height="44" fill="#f3eedd" stroke="#4a5560" stroke-width="2"/>
+<line x1="452" y1="156" x2="452" y2="66" stroke="#4a5560" stroke-width="4"/>
+<circle cx="452" cy="60" r="6" fill="#b08d3c"><animate attributeName="opacity" values="0.65;1;0.65" dur="9s" repeatCount="indefinite"/></circle>
+<g stroke="#4a5560" stroke-width="2"><line x1="452" y1="66" x2="452" y2="52"><animate attributeName="x2" values="440;464;440" dur="11s" repeatCount="indefinite"/></line></g>
+<line x1="330" y1="206" x2="330" y2="140" stroke="#4a5560" stroke-width="3"/>
+<g><animateTransform attributeName="transform" type="rotate" values="64 330 142; 8 330 142; 64 330 142" dur="9s" repeatCount="indefinite"/>
+<polygon points="330,142 366,148 362,160 330,152" fill="#f3eedd" stroke="#4a5560"/></g>
+<g fill="#f3eedd"><ellipse cx="660" cy="228" rx="8" ry="3"/><ellipse cx="690" cy="236" rx="9" ry="3"/><ellipse cx="636" cy="238" rx="7" ry="3"/></g>
+</g>
+<g>
+<circle cx="806" cy="238" r="42" fill="#f3eedd" stroke="#b08d3c" stroke-width="6"/>
+<g stroke="#4a5560" stroke-width="2"><line x1="806" y1="204" x2="806" y2="212"/><line x1="840" y1="238" x2="832" y2="238"/><line x1="806" y1="272" x2="806" y2="264"/><line x1="772" y1="238" x2="780" y2="238"/></g>
+<line x1="806" y1="238" x2="788" y2="222" stroke="#4a5560" stroke-width="3"><animate attributeName="x2" values="788;796;784;792;788" dur="6s" repeatCount="indefinite"/><animate attributeName="y2" values="222;216;226;220;222" dur="6s" repeatCount="indefinite"/></line>
+<circle cx="806" cy="238" r="4" fill="#b08d3c"/>
+</g>
+</svg>
